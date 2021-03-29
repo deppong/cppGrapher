@@ -17,7 +17,8 @@ struct graphParams {
     float range;
 };
 
-void initGraph(graphParams *gp) {
+void initGraph(graphParams *gp, View &view) {
+    view.setCenter(0.0f, 0.0f);
     gp -> minRange      = -10.0f;
     gp -> maxRange      =  10.0f;
     gp -> interations   = 500.0f;
@@ -46,7 +47,7 @@ void drawWindow(Font &font) {
     view.setCenter(0.0f, 0.0f);
     VertexArray axes(Lines, 4);
 
-    initGraph(&gp);
+    initGraph(&gp, view);
 
     while(window.isOpen()) { //CORE LOOP
         Event event;
@@ -57,7 +58,7 @@ void drawWindow(Font &font) {
         view.setSize(gp.domain, gp.range);
 
         for (float x = gp.minRange; x < gp.maxRange; x += gp.step) {
-            points.append(Vertex(Vector2f(x, - x), Color::Blue));
+            points.append(Vertex(Vector2f(x, - tan(1/x)), Color::Blue));
         }    
 
         drawAxes(gp, axes);
@@ -106,7 +107,23 @@ void drawWindow(Font &font) {
                             gp.domain += 10.0f;
                         break;
                     case Keyboard::P:
-                        initGraph(&gp);
+                        initGraph(&gp, view);
+                        break;
+                    case Keyboard::Up:
+                        view.move(0.0f, -10.0f);
+                        break;
+                    case Keyboard::Down:
+                        view.move(0.0f, 10.0f);
+                        break;
+                    case Keyboard::Left:
+                        view.move(-10.0f, 0.0f);
+                        gp.minRange += 10.0f;
+                        gp.maxRange -= 10.0f;
+                        break;
+                    case Keyboard::Right:
+                        view.move(10.0f, 0.0f);
+                        gp.minRange -= 10.0f;
+                        gp.maxRange += 10.0f;
                         break;
                     default:
                         break;
